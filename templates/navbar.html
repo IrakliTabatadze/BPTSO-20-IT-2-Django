@@ -9,9 +9,15 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="#">Home</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'add_event' %}">Add Event</a>
-        </li>
+
+        {% if user.is_authenticated and perms.core.add_event %}
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'add_event' %}">Add Event</a>
+          </li>
+
+        {% endif %}
+
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Dropdown
@@ -23,9 +29,24 @@
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
         </li>
+
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-disabled="true">{{ user }}</a>
+          </li>
+
+        {% else %}
+
         <li class="nav-item">
-          <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
         </li>
+
+        {% endif %}
+
+
       </ul>
       <form class="d-flex" role="search">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
