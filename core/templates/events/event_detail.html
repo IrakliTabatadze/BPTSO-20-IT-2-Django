@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %} Detailed Event {% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="card text-center">
+  <div class="card-header">
+    Featured
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">{{ event.title }}</h5>
+    <p class="card-text">{{ event.description }}</p>
+    <a href="{% url 'event_list' %}" class="btn btn-primary">Go Back</a>
+  </div>
+  <div class="card-footer text-body-secondary">
+    {{ event.create_date }}
+  </div>
+</div>
+
+{% endblock %}

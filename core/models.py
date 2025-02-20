@@ -1,5 +1,11 @@
 from django.db import models
 
+LOCATION_CHOICES = (
+    ('shekvetili_arena', 'Shekvetili Arena'),
+    ('dinamo_arena', 'Dinamo Arena'),
+    ('meskhi_stadium', 'Meskhi Stadium'),
+)
+
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
@@ -12,7 +18,7 @@ class Category(models.Model):
 class Event(models.Model):
     title = models.CharField(max_length=100, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
-    location = models.CharField(max_length=50, null=True, blank=True)
+    location = models.CharField(max_length=50, null=True, blank=True, choices=LOCATION_CHOICES)
     start_time = models.DateTimeField(null=True, blank=True)
     end_time = models.DateTimeField(null=True, blank=True)
     create_date = models.DateTimeField(auto_now_add=True)

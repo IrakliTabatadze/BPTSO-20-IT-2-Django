@@ -10,11 +10,12 @@
             <div class="card" style="width: 18rem;">
                 <img src="https://www.adweek.com/wp-content/uploads/files/gunsroses-hed-2016.png?w=652" class="card-img-top" alt="...">
                 <div class="card-body">
-                    <h5 class="card-title">{{ event.title }}</h5>
-                    <p class="card-text">{{ event.description|slice:":200" }}</p>
-                    <p class="card-text">{{ event.create_date }}</p>
-                    <p class="card-text">{{ event.update_date }}</p>
-                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                    <h5 class="card-title"><b>Title:</b> {{ event.title }}</h5>
+                    <p class="card-text"><b>Description:</b> {{ event.description|slice:":200" }}</p>
+                    <p class="card-text"><b>Location:</b> {{ event.location }}</p>
+                    <p class="card-text"><b>Create Date:</b> {{ event.create_date }}</p>
+                    <p class="card-text"><b>Update Date:</b> {{ event.update_date }}</p>
+                    <a href="{% url 'event_detail' event.id %}" class="btn btn-primary">See Detail</a>
                 </div>
             </div>
         {% endfor %}
