@@ -1,0 +1,9 @@
+[INFO  2025-02-22 22:02:50,998] views: Started Index Page Logic
+[INFO  2025-02-22 22:02:50,999] views: Filtering: Title - None, Location - None
+[INFO  2025-02-22 22:02:51,097] views: Event Count: 7
+[INFO  2025-02-22 22:05:01,117] views: Started Index Page Logic
+[ERROR  2025-02-22 22:05:01,117] views: Filtering: Title - None, Location - None
+[INFO  2025-02-22 22:05:01,147] views: Event Count: 7
+[INFO  2025-02-22 22:05:23,337] views: Started Index Page Logic
+[WARNING  2025-02-22 22:05:23,337] views: Filtering: Title - None, Location - None
+[INFO  2025-02-22 22:05:23,369] views: Event Count: 7
