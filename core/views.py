@@ -1,22 +1,23 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Event
-from .forms import EventForm
+from .forms import EventForm, EventImageFormSet
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from .permissions import event_manager_permission, delete_event_permission, change_event_permission
 import logging
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 logger = logging.getLogger(__name__)
 
 def event_list(request):
 
-    logger.info('Started Index Page Logic')
+    # logger.info('Started Index Page Logic')
 
     title = request.GET.get('title')
     location = request.GET.get('location')
 
-    logger.warning(f'Filtering: Title - {title}, Location - {location}')
+    # logger.warning(f'Filtering: Title - {title}, Location - {location}')
 
     filters = Q()
 
@@ -38,7 +39,19 @@ def event_list(request):
     else:
         events = Event.objects.all()
 
-    logger.info(f'Event Count: {events.count()}')
+
+    paginator = Paginator(events, 8)
+
+    try:
+        page = request.GET.get('page')
+        events = paginator.page(page)
+    except PageNotAnInteger:
+        events = paginator.page(1)
+    except EmptyPage:
+        events = paginator.page(paginator.num_pages)
+
+
+    # logger.info(f'Event Count: {events.count()}')
 
     return render(request, 'events/event_list.html', {'events': events})
 
@@ -47,16 +60,25 @@ def event_list(request):
 def add_event(request):
 
     if request.method == 'POST':
-        form = EventForm(request.POST)
+        image_formset = EventImageFormSet(request.POST, files=request.FILES)
+        event_form = EventForm(request.POST)
 
-        if form.is_valid():
-            event = form.save()
+        if event_form.is_valid() and image_formset.is_valid():
+            event = event_form.save()
+
+            for image_form in image_formset:
+                if image_form.cleaned_data.get('image'):
+                    print("image", image_form.cleaned_data.get('image'))
+                    image = image_form.save(commit=False)
+                    image.event = event
+                    image.save()
 
             return redirect('event_list')
     else:
-        form = EventForm()
+        event_form = EventForm()
+        image_formset = EventImageFormSet()
 
-        return render(request, 'events/add_event.html', {'form': form})
+        return render(request, 'events/add_event.html', {'event_form': event_form, 'image_formset': image_formset})
 
 
 def event_detail(request, pk):

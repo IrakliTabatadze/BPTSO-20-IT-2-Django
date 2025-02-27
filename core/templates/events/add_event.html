@@ -4,17 +4,29 @@
 
 {% load crispy_forms_tags %}
 
+{% load static %}
+
 {% block content %}
 
-  <form method="post">
+  <link rel="stylesheet" href="{% static 'core/css/add_event.css' %}">
 
-    {% csrf_token %}
+  <div class="event-form-div">
+    <form method="post" class="add-event-form" enctype="multipart/form-data">
 
-    {{ form|crispy }}
+      {% csrf_token %}
 
-    <button type="submit" class="btn btn-success">Add</button>
-    <a href="{% url 'event_list' %}" class="btn btn-danger">Cancel</a>
+      {{ event_form|crispy }}
 
-  </form>
+      {{ image_formset.management_form }}
+
+      {% for form in image_formset %}
+        {{ form|crispy }}
+      {% endfor %}
+
+      <button type="submit" class="btn btn-success">Add</button>
+      <a href="{% url 'event_list' %}" class="btn btn-danger">Cancel</a>
+
+    </form>
+  </div>
 
 {% endblock %}

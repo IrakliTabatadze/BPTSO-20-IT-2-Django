@@ -6,9 +6,16 @@
 
 <div class="container">
     <div class="row">
+        {% include 'events/paginator.html' %}
         {% for event in events %}
             <div class="card" style="width: 18rem;">
-                <img src="https://www.adweek.com/wp-content/uploads/files/gunsroses-hed-2016.png?w=652" class="card-img-top" alt="...">
+
+                {% if event.images.first %}
+                    <img src="{{ event.images.first.image.url }}" class="card-img-top" alt="...">
+                {% else %}
+                    <img src="https://www.adweek.com/wp-content/uploads/files/gunsroses-hed-2016.png?w=652" class="card-img-top" alt="...">
+                {% endif %}
+
                 <div class="card-body">
                     <h5 class="card-title"><b>Title:</b> {{ event.title }}</h5>
                     <p class="card-text"><b>Description:</b> {{ event.description|slice:":200" }}</p>
@@ -19,6 +26,8 @@
                 </div>
             </div>
         {% endfor %}
+
+        {% include 'events/paginator.html' %}
 
     </div>
 
