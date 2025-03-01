@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 LOCATION_CHOICES = (
     ('shekvetili_arena', 'Shekvetili Arena'),
@@ -24,11 +25,18 @@ class Event(models.Model):
     create_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
     max_attendees = models.PositiveIntegerField(null=True, blank=True)
+    ticket_count = models.PositiveIntegerField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='events', null=True, blank=True)
     # image = models.ImageField(upload_to='event-images/', null=True, blank=True)
 
     def __str__(self):
         return self.title
+
+    def sold_out(self):
+        if self.ticket_count <= 0:
+            return True
+        else:
+            return False
 
     class Meta:
         db_table = 'event'
@@ -37,3 +45,12 @@ class Event(models.Model):
 class EventImage(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='event-images/', null=True, blank=True)
+
+
+class EventTicket(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='tickets')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tickets')
+    ticket_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('event', 'user')
