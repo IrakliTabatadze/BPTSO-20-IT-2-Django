@@ -13,7 +13,7 @@
         {% if user.is_authenticated and perms.core.add_event %}
 
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'add_event' %}">Add Event</a>
+            <a class="nav-link" href="{% url 'core:add_event' %}">Add Event</a>
           </li>
 
         {% endif %}
@@ -23,12 +23,16 @@
             Dropdown
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a></li>
-            <li><a class="dropdown-item" href="{% url 'password_reset' %}">Reset Password</a></li>
+            <li><a class="dropdown-item" href="{% url 'authentication:password_change' %}">Change Password</a></li>
+            <li><a class="dropdown-item" href="{% url 'authentication:password_reset' %}">Reset Password</a></li>
             <li><hr class="dropdown-divider"></li>
             <li>{% if user.is_authenticated %}
                <li class="dropdown-item">
-                <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+<!--                <a class="nav-link" href="{% url 'authentication:logout' %}">Logout</a>-->
+                  <form action="{% url 'authentication:logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="nav-link">Logout</button>
+                  </form>
               </li>
             {% endif %}
           </ul>
@@ -43,7 +47,7 @@
         {% else %}
 
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'login' %}">Login</a>
+            <a class="nav-link" href="{% url 'authentication:login' %}">Login</a>
         </li>
 
         {% endif %}

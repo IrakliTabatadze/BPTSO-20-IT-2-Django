@@ -8,50 +8,64 @@ from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 
+from django.views.generic import CreateView
+from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView, LogoutView
 
-def register_user(request):
+# def register_user(request):
+#
+#     if request.method == 'POST':
+#         form = RegistrationForm(request.POST)
+#
+#         if form.is_valid():
+#             form.save()
+#
+#             login(request, form.user)
+#
+#             return redirect('event_list')
+#
+#         else:
+#             return render(request, 'registration/registration.html', {'form': form})
+#
+#     else:
+#         form = RegistrationForm()
+#
+#         return render(request, 'registration/registration.html', {'form': form})
 
-    if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-
-            login(request, form.user)
-
-            return redirect('event_list')
-
-        else:
-            return render(request, 'registration/registration.html', {'form': form})
-
-    else:
-        form = RegistrationForm()
-
-        return render(request, 'registration/registration.html', {'form': form})
-
-
-def login_user(request):
-
-    if request.method == 'POST':
-        form = AuthenticationForm(request=request, data=request.POST)
-
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(request, username=username, password=password)
-
-            if user is not None:
-                login(request, user)
-                return redirect('event_list')
-
-    else:
-        form = AuthenticationForm()
-        return render(request, 'registration/login.html', {'form': form})
+class RegistrationView(CreateView):
+    model = User
+    form_class = RegistrationForm
+    template_name = 'registration/registration.html'
+    success_url = reverse_lazy('authentication:login')
 
 
-def logout_user(request):
-    logout(request)
-    return redirect('login')
+# def login_user(request):
+#
+#     if request.method == 'POST':
+#         form = AuthenticationForm(request=request, data=request.POST)
+#
+#         if form.is_valid():
+#             username = form.cleaned_data.get('username')
+#             password = form.cleaned_data.get('password')
+#             user = authenticate(request, username=username, password=password)
+#
+#             if user is not None:
+#                 login(request, user)
+#                 return redirect('event_list')
+#
+#     else:
+#         form = AuthenticationForm()
+#         return render(request, 'registration/login.html', {'form': form})
+
+class UserLoginView(LoginView):
+    template_name = 'registration/login.html'
+
+# def logout_user(request):
+#     logout(request)
+#     return redirect('login')
+
+class UserLogoutView(LogoutView):
+    next_page = reverse_lazy('core:event_list')
 
 @login_required(login_url='login')
 def change_password(request):

@@ -15,7 +15,7 @@
 
       {% csrf_token %}
 
-      {{ event_form|crispy }}
+      {{ form|crispy }}
 
       {{ image_formset.management_form }}
 
@@ -24,7 +24,7 @@
       {% endfor %}
 
       <button type="submit" class="btn btn-success">Add</button>
-      <a href="{% url 'event_list' %}" class="btn btn-danger">Cancel</a>
+      <a href="{% url 'core:event_list' %}" class="btn btn-danger">Cancel</a>
 
     </form>
   </div>

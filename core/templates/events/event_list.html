@@ -6,6 +6,9 @@
 
 <div class="container">
     <div class="row">
+
+        <h1>{{ test }}</h1>
+
         {% include 'events/paginator.html' %}
         {% for event in events %}
             <div class="card" style="width: 18rem;">
@@ -22,7 +25,8 @@
                     <p class="card-text"><b>Location:</b> {{ event.location }}</p>
                     <p class="card-text"><b>Create Date:</b> {{ event.create_date }}</p>
                     <p class="card-text"><b>Update Date:</b> {{ event.update_date }}</p>
-                    <a href="{% url 'event_detail' event.id %}" class="btn btn-primary">See Detail</a>
+                    <a href="{% url 'core:event_detail' event.id %}" class="btn btn-primary">See Detail</a>
+                    <a href="{% url 'core:delete_event' event.id %}" class="btn btn-danger">Delete</a>
                 </div>
             </div>
         {% endfor %}

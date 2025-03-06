@@ -24,8 +24,8 @@
         <p class="card-text"><b>Start Time:</b> {{ event.start_time }}</p>
         <p class="card-text"><b>Category:</b> {{ event.category }}</p>
 
-        <a href="{% url 'event_list' %}" class="btn btn-danger">Cancel</a>
-        <a href="{% url 'buy_ticket' event.id %}" class="btn btn-primary">Buy Ticket</a>
+        <a href="{% url 'core:event_list' %}" class="btn btn-danger">Cancel</a>
+        <a href="{% url 'core:buy_ticket' event.id %}" class="btn btn-primary">Buy Ticket</a>
     </div>
 
 </div>
