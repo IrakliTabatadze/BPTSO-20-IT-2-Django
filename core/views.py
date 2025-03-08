@@ -11,16 +11,19 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.views.generic import View, ListView, CreateView, DetailView, DeleteView, UpdateView
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from .mixins import EventViewMixin
 
 logger = logging.getLogger(__name__)
 
 
-class EventListView(ListView):
+class EventListView(EventViewMixin, ListView):
     model = Event
     template_name = 'events/event_list.html'
     context_object_name = 'events'
     paginate_by = 8
-
+    # login_url = reverse_lazy('authentication:login')
+    # permission_required = 'core.view_event'
 
     def get_queryset(self):
         # queryset = super().get_queryset()
