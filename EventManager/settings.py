@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'authentication',
     'rest_framework',
     'drf_yasg',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -198,3 +199,18 @@ DEFAULT_FROM_EMAIL = 'irakli.tabatadze.80@gmail.com'
 
 
 LOGIN_REDIRECT_URL = '/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}

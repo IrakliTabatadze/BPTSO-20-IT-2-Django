@@ -7,15 +7,34 @@ from rest_framework.generics import get_object_or_404
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.parsers import FormParser, MultiPartParser
+from .filters import EventFilter
+from rest_framework.pagination import PageNumberPagination
+from django.core.cache import cache
+import hashlib
 
-@api_view(['GET'])
-def test(request):
-    return Response({'message': 'API Created Successfully'}, status=status.HTTP_200_OK)
+# @api_view(['GET'])
+# def test(request):
+#     return Response({'message': 'API Created Successfully'}, status=status.HTTP_200_OK)
+
+class CustomPagination(PageNumberPagination):
+    page_size = 5
+    page_query_param = 'page'
+    page_size_query_param = 'page_size'
+    max_page_size = 1
+
 
 @swagger_auto_schema(
     method='GET',
     operation_summary='Get Event Details',
     operation_description='This endpoint will return an Event Details',
+    manual_parameters=[
+      openapi.Parameter('page', openapi.IN_QUERY, type=openapi.TYPE_INTEGER),
+      openapi.Parameter('page_size', openapi.IN_QUERY, type=openapi.TYPE_INTEGER),
+      openapi.Parameter('title', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+      openapi.Parameter('location', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+      openapi.Parameter('create_date_gte', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+      openapi.Parameter('create_date_lte', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+    ],
     responses={
         status.HTTP_200_OK: EventSerializer,
         status.HTTP_400_BAD_REQUEST: openapi.Response(
@@ -25,11 +44,51 @@ def test(request):
 )
 @api_view(['GET'])
 def event_list(request):
-    events = Event.objects.all()
 
-    serializer = EventSerializer(events, many=True)
+    query_params_string = ''
 
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    for k, v in request.query_params.items():
+        query_params_string += f'&{k}:{v}'
+
+    # print(query_params_string)
+
+    cache_key = f'events_{hashlib.md5(query_params_string.encode()).hexdigest()}'
+
+    # print(cache_key)
+
+    result = cache.get(cache_key)
+
+    if not result:
+
+        events = Event.objects.all()
+
+        filterset = EventFilter(request.query_params, queryset=events)
+
+        if filterset.is_valid():
+            events = filterset.qs
+
+        paginator = CustomPagination()
+
+        paginated_queryset = paginator.paginate_queryset(events, request)
+
+        serializer = EventSerializer(paginated_queryset, many=True)
+
+        result = {
+            'count': paginator.page.paginator.count,
+            'next': paginator.get_next_link(),
+            'previous': paginator.get_previous_link(),
+            'results': serializer.data
+        }
+
+        cache.set(cache_key, result, 30)
+
+        print('Events selected from database')
+    else:
+        print('Events selected from Redis')
+
+
+
+    return Response(result, status=status.HTTP_200_OK)
 
 
 @swagger_auto_schema(
