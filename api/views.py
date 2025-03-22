@@ -11,7 +11,8 @@ from .filters import EventFilter
 from rest_framework.pagination import PageNumberPagination
 from django.core.cache import cache
 import hashlib
-
+from rest_framework.permissions import AllowAny
+from .permissions import HasEventViewPermission
 # @api_view(['GET'])
 # def test(request):
 #     return Response({'message': 'API Created Successfully'}, status=status.HTTP_200_OK)
@@ -160,8 +161,10 @@ class EventListAPIView(ListAPIView):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
     pagination_class = CustomPagination
+    permission_classes = (HasEventViewPermission,)
 
     def get_queryset(self):
+        print(self.request.user and self.request.user.has_perm('core.view_event'))
         events = super().get_queryset()
         filterset = EventFilter(self.request.query_params, queryset=events)
 
